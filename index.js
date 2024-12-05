@@ -1,12 +1,18 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
+const Person = require('./models/person')
+
+mongoose.set('strictQuery', false)
 
 app.use(express.json())
 app.use(morgan('tiny'))
 //app.use(morgan(':method :url :body'))
 app.use(cors())
+app.use(express.static('dist'))
 
 let persons = [
   {
@@ -41,7 +47,10 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  console.log("index.js app.get")
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -60,6 +69,7 @@ const generateId = () => {
 }
 
 app.post('/api/persons', (request, response) => {
+  console.log("index.js app.post")
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -74,16 +84,20 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  const person = {
-    name: body.name,
-    number: body.number,
+  const person = new Person({
     id: generateId(),
-  }
+    name: body.name,
+    number: body.number
+  })
 
-  persons = persons.concat(person)
+  /*persons = persons.concat(person)
   response.json(person)
-
-  morgan.token('body', request => JSON.stringify(request.body))
+ */
+  console.log("index.js doing person.save")
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+  //morgan.token('body', request => JSON.stringify(request.body))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -93,7 +107,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
