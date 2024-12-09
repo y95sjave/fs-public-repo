@@ -113,6 +113,13 @@ const App = () => {
               setNotification(null)
             }, 3000)
         })
+        .catch(error => {
+          console.log("UI catch error", error)
+          setNotification(error.response.data.error, notificationError=true)
+            setTimeout(() => {
+              setNotification(null)
+            }, 3000)
+        })
     }
   }
 
