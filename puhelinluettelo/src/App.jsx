@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
@@ -5,6 +6,7 @@ let notificationError = false
 
 const Notification = ({ message, notificationError=false}) => {
   if (message === null) {
+    notificationError = false
     return null
   }
 
@@ -83,6 +85,7 @@ const App = () => {
     const addedOrUpdatedPerson = {name, number}
     let result = null
   
+    // eslint-disable-next-line no-cond-assign
     if (result = persons.find((person) => person.name === name)) {
       if (window.confirm(`${name} is already added to phonebook, replace old number with new one?`)) {
         personService
@@ -95,10 +98,9 @@ const App = () => {
             }, 3000)
           })
           .catch(error => {
-            setNotification(`Person ${name} has already been removed from server`, notificationError=true)
+            setNotification(error.response.data.error, notificationError=true)
                 setTimeout(() => {
                   setNotification(null)
-                  notificationError = false
                 }, 3000)
           }) 
         }
@@ -135,10 +137,9 @@ const App = () => {
             }, 3000)
       })
       .catch(error => {
-        setNotification('Some error happened', notificationError=true)
+        setNotification(error.response.data.error, notificationError=true)
             setTimeout(() => {
               setNotification(null)
-              notificationError = false
             }, 3000)
       }) 
     }
