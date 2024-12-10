@@ -6,12 +6,10 @@ let notificationError = false
 
 const Notification = ({ message, notificationError=false}) => {
   if (message === null) {
-    notificationError = false
     return null
   }
 
   if (notificationError) {
-    console.log("error!")
     return (
       <div className="notification error">
         {message}
@@ -101,6 +99,7 @@ const App = () => {
             setNotification(error.response.data.error, notificationError=true)
                 setTimeout(() => {
                   setNotification(null)
+                  notificationError = false
                 }, 3000)
           }) 
         }
@@ -116,10 +115,11 @@ const App = () => {
             }, 3000)
         })
         .catch(error => {
-          console.log("UI catch error", error)
+          console.log('UI catch error', error)
           setNotification(error.response.data.error, notificationError=true)
             setTimeout(() => {
               setNotification(null)
+              notificationError = false
             }, 3000)
         })
     }
@@ -140,6 +140,7 @@ const App = () => {
         setNotification(error.response.data.error, notificationError=true)
             setTimeout(() => {
               setNotification(null)
+              notificationError = false
             }, 3000)
       }) 
     }
