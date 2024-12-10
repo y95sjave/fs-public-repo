@@ -16,24 +16,24 @@ app.use(express.static('dist'))
 
 let persons = [
   {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: "1"
+    name: 'Arto Hellas',
+    number: '040-123456',
+    id: '1'
   },
   {
-    name: "Ada Lovelace",
-    number: "23423423",
-    id: "2"
+    name: 'Ada Lovelace',
+    number: '23423423',
+    id: '2'
   },
   {
-    name: "Dan Abramov",
-    number: "99",
-    id: "3"
+    name: 'Dan Abramov',
+    number: '99',
+    id: '3'
   },
   {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: "4"
+    name: 'Mary Poppendieck',
+    number: '39-23-6423122',
+    id: '4'
   },
 ]
 
@@ -47,14 +47,13 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  console.log("index.js app.get")
+  console.log('index.js app.get')
   Person.find({}).then(persons => {
     response.json(persons)
   })
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-  const id = request.params.id
   //const person = persons.find(person => person.id === id)
   Person.findById(request.params.id)
     .then(person => {
@@ -68,7 +67,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  console.log("index.js app.put")
+  console.log('index.js app.put')
   const body = request.body
   const person = {
     name: body.name,
@@ -82,13 +81,13 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-const generateId = () => {
+/*const generateId = () => {
   const randomId = (99999999*Math.random()).toFixed(0)
   return String(randomId)
-}
+}*/
 
 app.post('/api/persons', (request, response, next) => {
-  console.log("index.js app.post")
+  console.log('index.js app.post')
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -112,11 +111,11 @@ app.post('/api/persons', (request, response, next) => {
   /*persons = persons.concat(person)
   response.json(person)
  */
-  console.log("index.js doing person.save")
+  console.log('index.js doing person.save')
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
   //morgan.token('body', request => JSON.stringify(request.body))
 })
 
@@ -126,14 +125,14 @@ app.delete('/api/persons/:id', (request, response, next) => {
   response.status(204).end()*/
 
   Person.findByIdAndDelete(request.params.id)
-  .then(result => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
+    .then(() => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
-  console.error("ERROR:",error.message)
+  console.error('ERROR:',error.message)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
